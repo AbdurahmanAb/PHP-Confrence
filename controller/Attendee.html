@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <img src="" alt="" id="one" style="height: 500px; width: 500px" />
+    <h2>Here Is Your Qr Code For Attendance</h2>
+    Your Data Added To Database
+    <script>
+      var value = new URLSearchParams(window.location.search).get("value");
+      document.getElementById("one").src = value;
+      console.log(value);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div style="display: flex; align-items: center; gap: 40px">
+      <div>
+        <div id="qr-reader" style="width: 500px"></div>
+        <div id="qr-reader-results"></div>
+      </div>
+
+      <div>
+        <h1 id="name"></h1>
+        <h2 id="email"></h2>
+        <h3 id="Address"></h3>
+        <img src="" alt="" id="img" />
+      </div>
+    </div>
+
+    <script>
+      var resultContainer = document.getElementById("qr-reader-results");
+      var lastResult,
+        countResults = 0;
+
+      function onScanSuccess(decodedText, decodedResult) {
+        if (decodedText !== lastResult) {
+          ++countResults;
+          lastResult = decodedText;
+
+          var formdata = new FormData();
+          formdata.append("decodedText", decodedText);
+
+          var requestOptions = {
+            method: "POST",
+            body: formdata,
+            redirect: "follow",
+          };
+
+          fetch("./Scan.php", requestOptions)
+            .then((response) => response.text())
+            .then((result) => JSON.parse(result))
+            .then((data) => {
+              document.getElementById("name").innerHTML = data[0].name;
+              document.getElementById("email").innerHTML = data[0].email;
+              document.getElementById("Address").innerHTML = data[0].Address;
+              document.getElementById("img").src = data[0].Image;
+            })
+            .catch((error) => console.log("error", error));
+          formdata.append("decodedText", decodedText);
+
+          //   fetch("./Scan.php", {
+          //     method: "POST",
+          //     headers: {
+          //       "Content-Type": "application/JSON",
+          //     },
+          //     body: formdata,
+          //   }).then((res) => console.log(res.json()));
+          //   console.log(`Scan result ${decodedText}`, decodedResult);
+        }
+      }
+
+      var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", {
+        fps: 10,
+        qrbox: 250,
+      });
+      html5QrcodeScanner.render(onScanSuccess);
+    </script>
+  </body>
+</html>
